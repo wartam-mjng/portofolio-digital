@@ -178,7 +178,7 @@
 <header>
   <div>
     <div class="eyebrow">Katalog &mdash; Produk Digital</div>
-    <h1>PORTOFOLIO GIGITAL</h1>
+    <h1>PORTOFOLIO DIGITAL</h1>
     <p>Kumpulan berbagai produk digital yang sudah dibuat. Pilih produk untuk akses langsung dan klik daftar jika ingin belajar dan ada akses</p>
   </div>
   <button class="admin-link" id="openAdminBtn">&#9998; Kelola Produk</button>
@@ -325,7 +325,7 @@ function render(){
       <h3>${p.Nama || 'Tanpa nama'}</h3>
       <p class="desc">${p.Deskripsi || ''}</p>
       <div class="card-actions">
-        <a class="btn btn-ghost" href="${p.Tautan || '#'}" target="_blank" rel="noopener">Buka Produk</a>
+        <a class="btn btn-ghost" href="${p.Tautan || '#'}" target="_blank" rel="noopener">Buka Tautan</a>
         ${buka
           ? `<button class="btn btn-solid" onclick="openModal('${(p.Nama||'').replace(/'/g,"\\'")}')">Daftar</button>`
           : `<button class="btn btn-solid" disabled onclick="showClosedNotice()">Daftar</button>`
