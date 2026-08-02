@@ -247,6 +247,27 @@
   </div>
 </div>
 
+<!-- Modal kode akses -->
+<div class="overlay" id="gateOverlay">
+  <div class="ticket">
+    <div class="ticket-head">
+      <div>
+        <div class="eyebrow">Tautan Terkunci</div>
+        <h3 id="gateTitle" style="font-size:18px;">Nama Produk</h3>
+      </div>
+      <button class="close-x" data-close="gateOverlay">&times;</button>
+    </div>
+    <div class="ticket-body">
+      <div class="form-msg" id="gateMsg"></div>
+      <div class="field">
+        <label>Kode Akses</label>
+        <input type="text" id="gateCodeInput" placeholder="Masukkan kode">
+      </div>
+      <button class="btn btn-solid" id="gateSubmitBtn" style="width:100%;">Buka Tautan</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // =====================================================================
 // GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU
@@ -325,7 +346,10 @@ function render(){
       <h3>${p.Nama || 'Tanpa nama'}</h3>
       <p class="desc">${p.Deskripsi || ''}</p>
       <div class="card-actions">
-        <a class="btn btn-ghost" href="${p.Tautan || '#'}" target="_blank" rel="noopener">Buka Tautan</a>
+        ${(p.KodeAkses || '').trim()
+          ? `<button class="btn btn-ghost" onclick="openLinkGate('${p.ID}')">&#128274; Buka Tautan</button>`
+          : `<a class="btn btn-ghost" href="${p.Tautan || '#'}" target="_blank" rel="noopener">Buka Tautan</a>`
+        }
         ${buka
           ? `<button class="btn btn-solid" onclick="openModal('${(p.Nama||'').replace(/'/g,"\\'")}')">Daftar</button>`
           : `<button class="btn btn-solid" disabled onclick="showClosedNotice()">Daftar</button>`
@@ -348,6 +372,7 @@ document.querySelectorAll('[data-close]').forEach(btn => {
 });
 document.getElementById('overlay').addEventListener('click', (e) => { if(e.target.id==='overlay') e.target.classList.remove('show'); });
 document.getElementById('adminOverlay').addEventListener('click', (e) => { if(e.target.id==='adminOverlay') e.target.classList.remove('show'); });
+document.getElementById('gateOverlay').addEventListener('click', (e) => { if(e.target.id==='gateOverlay') e.target.classList.remove('show'); });
 
 // ---- Modal pendaftaran ----
 const overlay = document.getElementById('overlay');
@@ -376,6 +401,44 @@ function showClosedNotice(){
     toast.style.transform = 'translateX(-50%) translateY(20px)';
   }, 2200);
 }
+
+// ---- Modal kode akses (link terkunci) ----
+const gateOverlay = document.getElementById('gateOverlay');
+let gateProduk = null;
+
+function openLinkGate(id){
+  const p = allProducts.find(x => x.ID === id);
+  if(!p) return;
+  gateProduk = p;
+  document.getElementById('gateTitle').textContent = p.Nama || 'Tanpa nama';
+  document.getElementById('gateCodeInput').value = '';
+  const m = document.getElementById('gateMsg');
+  m.className = 'form-msg';
+  gateOverlay.classList.add('show');
+  setTimeout(() => document.getElementById('gateCodeInput').focus(), 50);
+}
+
+document.getElementById('gateSubmitBtn').addEventListener('click', () => {
+  const input = document.getElementById('gateCodeInput').value.trim();
+  const m = document.getElementById('gateMsg');
+  const kodeAsli = (gateProduk && gateProduk.KodeAkses || '').trim();
+
+  if(!input){
+    m.textContent = 'Kode wajib diisi.';
+    m.className = 'form-msg show err';
+    return;
+  }
+  if(input.toLowerCase() !== kodeAsli.toLowerCase()){
+    m.textContent = 'Kode salah. Coba lagi.';
+    m.className = 'form-msg show err';
+    return;
+  }
+  gateOverlay.classList.remove('show');
+  window.open(gateProduk.Tautan || '#', '_blank', 'noopener');
+});
+document.getElementById('gateCodeInput').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') document.getElementById('gateSubmitBtn').click();
+});
 
 function openModal(nama){
   const p = allProducts.find(x => x.Nama === nama);
