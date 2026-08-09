@@ -569,7 +569,7 @@ function showAdminList(){
   const rows = adminProducts.map(p => `
     <div class="admin-row">
       <div>
-        <div class="admin-row-name">${p.Nama || 'Tanpa nama'} ${(p.KodeAkses||'').trim() ? '&#128274;' : ''}</div>
+        <div class="admin-row-name">${p.Nama || 'Tanpa nama'} ${String(p.KodeAkses || '').trim() ? '&#128274;' : ''}</div>
         <div class="admin-row-cat">${p.Kategori || '-'} &middot; ${p.Status || ''}</div>
       </div>
       <div class="admin-row-actions">
